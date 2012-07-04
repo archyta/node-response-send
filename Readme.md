@@ -1,7 +1,53 @@
 
 # response-send
 
-  response.send() prototype method
+  `response.send()` prototype method from [Express](http://expressjs.com).
+
+## Installtion
+
+    $ npm install response-send
+
+## Integration
+
+ To integrate in your app / framework extend the native response prototype or
+ your own custom prototype if necessary:
+
+```js
+var http = require('http');
+var send = require('response-send');
+
+// #nodejsWTF?
+
+http.ServerResponse.prototype.__defineGetter__('req', function(){
+  return this.socket.parser.incoming;
+});
+
+// augment prototype
+
+http.ServerResponse.prototype.send = send;
+
+http.ServerResponse.prototype.json = send.json({
+  spaces: 2
+});
+```
+
+## API
+
+```js
+res.send(new Buffer('wahoo'));
+res.send({ some: 'json' });
+res.send([1,2,3]);
+res.send('<p>some html</p>');
+res.send(404, 'Sorry, cant find that');
+res.send(404);
+```
+
+```js
+res.json({ some: 'json' });
+res.json([1,2,3]);
+res.json(201, { some: 'json' });
+res.json(201, [1,2,3]);
+```
 
 ## License 
 
