@@ -127,6 +127,18 @@ describe('res.send()', function(){
   })
 })
 
+describe('res.send(null)', function(){
+  it('should respond with ""', function(done){
+    var app = server(function(req, res){
+      res.send(null);
+    });
+
+    request(app)
+    .get('/')
+    .expect('', done);
+  })
+})
+
 describe('res.send(status)', function(){
   it('should respond the status code string', function(done){
     var app = server(function(req, res){
