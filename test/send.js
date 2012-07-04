@@ -2,7 +2,8 @@
 var http = require('http')
   , send = require('..')
   , server = http.createServer
-  , request = require('supertest');
+  , request = require('supertest')
+  , pending = require('./utils/pending');
 
 // #nodejsWTF?
 
@@ -43,6 +44,34 @@ describe('res.send()', function(){
     .expect('')
     .expect('Content-Length', '5')
     .expect(200, done);
+  })
+
+  it('should add a weak ETag', function(done){
+    done = pending(3, done);
+
+    var app = server(function(req, res){
+      switch (req.url) {
+        case '/foo':
+          return res.send(Array(1000).join('foo'));
+        case '/bar':
+          return res.send(Array(1000).join('bar'));
+      }
+    });
+
+    request(app)
+    .get('/foo')
+    .expect('ETag', '601152967')
+    .end(done);
+
+    request(app)
+    .get('/foo')
+    .expect('ETag', '601152967')
+    .end(done);
+
+    request(app)
+    .get('/bar')
+    .expect('ETag', '-1124164645')
+    .end(done);
   })
 })
 
