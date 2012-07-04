@@ -233,3 +233,33 @@ describe('res.send(Object)', function(){
     .expect(200, done);
   })
 })
+
+describe('res.send(status, Object)', function(){
+  it('should respond with json', function(done){
+    var app = server(function(req, res){
+      res.send(201, { name: 'tobi' });
+    });
+
+    request(app)
+    .get('/')
+    .expect('{\n  "name": "tobi"\n}')
+    .expect('Content-Length', '20')
+    .expect('Content-Type', 'application/json')
+    .expect(201, done);
+  })
+})
+
+describe('res.send(Object, status)', function(){
+  it('should respond with json', function(done){
+    var app = server(function(req, res){
+      res.send({ name: 'tobi' }, 201);
+    });
+
+    request(app)
+    .get('/')
+    .expect('{\n  "name": "tobi"\n}')
+    .expect('Content-Length', '20')
+    .expect('Content-Type', 'application/json')
+    .expect(201, done);
+  })
+})
