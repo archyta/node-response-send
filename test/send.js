@@ -7,6 +7,7 @@ var http = require('http')
 // augment prototype
 
 // #nodejsWTF?
+
 http.ServerResponse.prototype.__defineGetter__('req', function(){
   return this.socket.parser.incoming;
 });
@@ -14,23 +15,16 @@ http.ServerResponse.prototype.__defineGetter__('req', function(){
 http.ServerResponse.prototype.send = send;
 
 describe('res.send(string)', function(){
-  beforeEach(function(done){
-    var self = this;
-
+  it('should respond with html', function(done){
     var app = server(function(req, res){
       res.send('<p>Hello</p>');
     });
 
     request(app)
     .get('/')
-    .end(function(err, res){
-      if (err) return done(err);
-      self.res = res;
-      done();
-    })
-  })
-
-  it('should respond with HTML', function(){
-    this.res.should.have.header('content-type', 'text/html');
+    .expect('<p>Hello</p>')
+    .expect('Content-Length', '12')
+    .expect('Content-Type', 'text/html')
+    .expect(200, done);
   })
 })
