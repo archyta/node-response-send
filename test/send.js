@@ -62,6 +62,26 @@ describe('res.send(status)', function(){
   });
 })
 
+describe('res.send(Buffer)', function(){
+  it('should respond with an octet-stream', function(done){
+    var app = server(function(req, res){
+      res.send(new Buffer('hey'));
+    });
+
+    request(app)
+    .get('/')
+    .expect('hey')
+    .expect('Content-Length', '3')
+    .expect('Content-Type', 'application/octet-stream')
+    .expect(200, done);
+  })
+
+  shared(function(req, res){
+    res.send(new Buffer('hey'));
+  });
+})
+
+
 describe('res.send(string)', function(){
   it('should respond with html', function(done){
     var app = server(function(req, res){
