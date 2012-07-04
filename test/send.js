@@ -16,6 +16,20 @@ http.ServerResponse.prototype.send = send;
 
 // tests
 
+describe('res.send()', function(){
+  it('should support HEAD', function(done){
+    var app = server(function(req, res){
+      res.send('Hello');
+    });
+
+    request(app)
+    .head('/')
+    .expect('')
+    .expect('Content-Length', '5')
+    .expect(200, done);
+  })
+})
+
 describe('res.send(string)', function(){
   it('should respond with html', function(done){
     var app = server(function(req, res){
