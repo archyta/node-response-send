@@ -30,3 +30,18 @@ describe('res.send(string)', function(){
     .expect(200, done);
   })
 })
+
+describe('res.send(String)', function(){
+  it('should respond with html', function(done){
+    var app = server(function(req, res){
+      res.send(new String('<p>Hello</p>'));
+    });
+
+    request(app)
+    .get('/')
+    .expect('<p>Hello</p>')
+    .expect('Content-Length', '12')
+    .expect('Content-Type', 'text/html')
+    .expect(200, done);
+  })
+})
