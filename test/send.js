@@ -30,6 +30,18 @@ describe('res.send()', function(){
   })
 })
 
+describe('res.send(status)', function(){
+  it('should respond the status code string', function(done){
+    var app = server(function(req, res){
+      res.send(201);
+    });
+
+    request(app)
+    .get('/')
+    .expect(201, 'Created', done);
+  })
+})
+
 describe('res.send(string)', function(){
   it('should respond with html', function(done){
     var app = server(function(req, res){
