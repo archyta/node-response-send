@@ -14,6 +14,22 @@ http.ServerResponse.prototype.__defineGetter__('req', function(){
 
 http.ServerResponse.prototype.send = send;
 
+// shared
+
+function shared(fn) {
+  it('should not override a previous Content-Type', function(done){
+    var app = server(function(req, res){
+      res.setHeader('Content-Type', 'image/png');
+      fn(req, res);
+    });
+
+    request(app)
+    .get('/')
+    .expect('Content-Type', 'image/png')
+    .end(done);
+  })
+}
+
 // tests
 
 describe('res.send()', function(){
@@ -40,6 +56,10 @@ describe('res.send(status)', function(){
     .get('/')
     .expect(201, 'Created', done);
   })
+
+  shared(function(req, res){
+    res.send(201);
+  });
 })
 
 describe('res.send(string)', function(){
@@ -55,6 +75,10 @@ describe('res.send(string)', function(){
     .expect('Content-Type', 'text/html')
     .expect(200, done);
   })
+
+  shared(function(req, res){
+    res.send('<p>Hello</p>');
+  });
 })
 
 describe('res.send(status, string)', function(){
@@ -69,6 +93,10 @@ describe('res.send(status, string)', function(){
     .expect('Content-Type', 'text/html')
     .expect(201, done);
   })
+
+  shared(function(req, res){
+    res.send(201, '<p>Created</p>');
+  });
 })
 
 describe('res.send(string, status)', function(){
@@ -83,6 +111,10 @@ describe('res.send(string, status)', function(){
     .expect('Content-Type', 'text/html')
     .expect(201, done);
   })
+
+  shared(function(req, res){
+    res.send('<p>Created</p>', 201);
+  });
 })
 
 describe('res.send(String)', function(){
