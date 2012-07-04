@@ -73,6 +73,30 @@ describe('res.send()', function(){
     .expect('ETag', '-1124164645')
     .end(done);
   })
+
+  it('should respond with 304 when ETag matches', function(done){
+    done = pending(2, done);
+
+    var app = server(function(req, res){
+      return res.send(Array(1000).join('foo'));
+    });
+
+    request(app)
+    .get('/foo')
+    .expect('ETag', '601152967')
+    .expect(200, done);
+
+    request(app)
+    .get('/foo')
+    .set('If-None-Match', '601152967')
+    .end(function(err, res){
+      res.should.have.status(304);
+      res.headers.should.not.have.property('content-length');
+      res.headers.should.not.have.property('content-type');
+      res.text.should.equal('');
+      done();
+    });
+  })
 })
 
 describe('res.send(status)', function(){
