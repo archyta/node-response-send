@@ -57,6 +57,20 @@ describe('res.send(string)', function(){
   })
 })
 
+describe('res.send(status, string)', function(){
+  it('should respond with html', function(done){
+    var app = server(function(req, res){
+      res.send(201, '<p>Created</p>');
+    });
+
+    request(app)
+    .get('/')
+    .expect('<p>Created</p>')
+    .expect('Content-Type', 'text/html')
+    .expect(201, done);
+  })
+})
+
 describe('res.send(String)', function(){
   it('should respond with html', function(done){
     var app = server(function(req, res){
