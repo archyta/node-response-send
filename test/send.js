@@ -14,6 +14,9 @@ http.ServerResponse.prototype.__defineGetter__('req', function(){
 // augment prototype
 
 http.ServerResponse.prototype.send = send;
+http.ServerResponse.prototype.json = send.json({
+  spaces: 2
+});
 
 // shared
 
@@ -212,6 +215,21 @@ describe('res.send(String)', function(){
     .expect('<p>Hello</p>')
     .expect('Content-Length', '12')
     .expect('Content-Type', 'text/html')
+    .expect(200, done);
+  })
+})
+
+describe('res.send(Object)', function(){
+  it('should respond with json', function(done){
+    var app = server(function(req, res){
+      res.send({ name: 'tobi' });
+    });
+
+    request(app)
+    .get('/')
+    .expect('{\n  "name": "tobi"\n}')
+    .expect('Content-Length', '20')
+    .expect('Content-Type', 'application/json')
     .expect(200, done);
   })
 })
