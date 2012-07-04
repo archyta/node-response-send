@@ -4,15 +4,17 @@ var http = require('http')
   , server = http.createServer
   , request = require('supertest');
 
-// augment prototype
-
 // #nodejsWTF?
 
 http.ServerResponse.prototype.__defineGetter__('req', function(){
   return this.socket.parser.incoming;
 });
 
+// augment prototype
+
 http.ServerResponse.prototype.send = send;
+
+// tests
 
 describe('res.send(string)', function(){
   it('should respond with html', function(done){
