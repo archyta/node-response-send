@@ -81,7 +81,6 @@ describe('res.send(Buffer)', function(){
   });
 })
 
-
 describe('res.send(string)', function(){
   it('should respond with html', function(done){
     var app = server(function(req, res){
@@ -93,6 +92,18 @@ describe('res.send(string)', function(){
     .expect('<p>Hello</p>')
     .expect('Content-Length', '12')
     .expect('Content-Type', 'text/html')
+    .expect(200, done);
+  })
+
+  it('should respond with byte-length', function(done){
+    var app = server(function(req, res){
+      res.send('…');
+    });
+
+    request(app)
+    .get('/')
+    .expect('…')
+    .expect('Content-Length', '3')
     .expect(200, done);
   })
 
