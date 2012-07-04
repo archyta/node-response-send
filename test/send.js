@@ -81,7 +81,7 @@ describe('res.send()', function(){
     done = pending(2, done);
 
     var app = server(function(req, res){
-      return res.send(Array(1000).join('foo'));
+      res.send(Array(1000).join('foo'));
     });
 
     request(app)
@@ -97,6 +97,31 @@ describe('res.send()', function(){
       res.headers.should.not.have.property('content-length');
       res.headers.should.not.have.property('content-type');
       res.text.should.equal('');
+      done();
+    });
+  })
+
+  it('should pass through non-2xx or 304 responses', function(done){
+    done = pending(2, done);
+
+    var app = server(function(req, res){
+      res.statusCode = 500;
+      res.send(Array(1000).join('foo'));
+    });
+
+    request(app)
+    .get('/foo')
+    .expect('ETag', '601152967')
+    .expect(500, done);
+
+    request(app)
+    .get('/foo')
+    .set('If-None-Match', '601152967')
+    .end(function(err, res){
+      res.should.have.status(500);
+      res.headers.should.have.property('content-length');
+      res.headers.should.have.property('content-type');
+      res.text.should.equal(Array(1000).join('foo'));
       done();
     });
   })
