@@ -3,7 +3,8 @@ var http = require('http')
   , send = require('..')
   , server = http.createServer
   , request = require('supertest')
-  , pending = require('./utils/pending');
+  , pending = require('./utils/pending')
+  , should = require('should');
 
 // #nodejsWTF?
 
@@ -63,17 +64,17 @@ describe('res.send()', function(){
 
     request(app)
     .get('/foo')
-    .expect('ETag', '601152967')
+    .expect('ETag', '"601152967"')
     .end(done);
 
     request(app)
     .get('/foo')
-    .expect('ETag', '601152967')
+    .expect('ETag', '"601152967"')
     .end(done);
 
     request(app)
     .get('/bar')
-    .expect('ETag', '-1124164645')
+    .expect('ETag', '"-1124164645"')
     .end(done);
   })
 
@@ -86,12 +87,12 @@ describe('res.send()', function(){
 
     request(app)
     .get('/foo')
-    .expect('ETag', '601152967')
+    .expect('ETag', '"601152967"')
     .expect(200, done);
 
     request(app)
     .get('/foo')
-    .set('If-None-Match', '601152967')
+    .set('If-None-Match', '"601152967"')
     .end(function(err, res){
       res.should.have.status(304);
       res.headers.should.not.have.property('content-length');
@@ -111,12 +112,12 @@ describe('res.send()', function(){
 
     request(app)
     .get('/foo')
-    .expect('ETag', '601152967')
+    .expect('ETag', '"601152967"')
     .expect(500, done);
 
     request(app)
     .get('/foo')
-    .set('If-None-Match', '601152967')
+    .set('If-None-Match', '"601152967"')
     .end(function(err, res){
       res.should.have.status(500);
       res.headers.should.have.property('content-length');
